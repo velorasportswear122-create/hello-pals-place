@@ -79,12 +79,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "دارك العقارية | منصة تسويق عقاري موثوقة" },
+      { title: "عقارات منيا القمح الجديدة | منصة تسويق عقاري موثوقة" },
       {
         name: "description",
-        content: "منصة دارك العقارية للتمليك والإيجار: اعرض وحدتك أو ابحث عن عقارك بأمان تام وبيانات محمية.",
+        content: "منصة عقارات منيا القمح الجديدة للتمليك والإيجار: اعرض وحدتك أو ابحث عن عقارك بأمان تام وبيانات محمية.",
       },
-      { property: "og:title", content: "دارك العقارية | منصة تسويق عقاري موثوقة" },
+      { property: "og:title", content: "عقارات منيا القمح الجديدة | منصة تسويق عقاري موثوقة" },
       {
         property: "og:description",
         content: "قسم التمليك وقسم الإيجار في تطبيق واحد، مع حماية كاملة للعناوين وأرقام التواصل.",

@@ -14,9 +14,9 @@ export const Route = createFileRoute("/account")({
   }),
   head: () => ({
     meta: [
-      { title: "اختر نوع الحساب | دارك العقارية" },
+      { title: "اختر نوع الحساب | عقارات منيا القمح الجديدة" },
       { name: "description", content: "اختر نوع حسابك المناسب: بائع، مشتري، مؤجر، مستأجر أو أدمن." },
-      { property: "og:title", content: "اختر نوع الحساب | دارك العقارية" },
+      { property: "og:title", content: "اختر نوع الحساب | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "حدد دورك داخل قسم التمليك أو قسم الإيجار وابدأ فورًا." },
     ],
   }),

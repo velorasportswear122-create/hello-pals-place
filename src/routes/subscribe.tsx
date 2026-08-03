@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/subscribe")({
   head: () => ({
     meta: [
-      { title: "الاشتراك الشهري 200 جنيه | دارك العقارية" },
+      { title: "الاشتراك الشهري 200 جنيه | عقارات منيا القمح الجديدة" },
       { name: "description", content: "اشترك بـ200 جنيه شهريًا لعرض تفاصيل الوحدات والتواصل عبر الإدارة." },
-      { property: "og:title", content: "الاشتراك الشهري 200 جنيه | دارك العقارية" },
+      { property: "og:title", content: "الاشتراك الشهري 200 جنيه | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "صور وفيديوهات وتفاصيل كاملة وطلبات تواصل غير محدودة." },
     ],
   }),

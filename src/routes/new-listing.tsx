@@ -17,9 +17,9 @@ export const Route = createFileRoute("/new-listing")({
   }),
   head: () => ({
     meta: [
-      { title: "إضافة وحدة عقارية | دارك العقارية" },
+      { title: "إضافة وحدة عقارية | عقارات منيا القمح الجديدة" },
       { name: "description", content: "ارفع صور وفيديوهات وحدتك واكتب تفاصيلها، والعنوان يظل محجوبًا." },
-      { property: "og:title", content: "إضافة وحدة عقارية | دارك العقارية" },
+      { property: "og:title", content: "إضافة وحدة عقارية | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "اعرض وحدتك للبيع أو الإيجار في دقائق." },
     ],
   }),

@@ -8,13 +8,13 @@ import { SUBSCRIPTION_PRICE } from "@/lib/app-content";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "دارك العقارية | تمليك وإيجار العقارات" },
+      { title: "عقارات منيا القمح الجديدة | تمليك وإيجار العقارات" },
       {
         name: "description",
         content:
           "اختر بين قسم التمليك وقسم الإيجار، اعرض وحدتك بالصور والفيديو، وتواصل بأمان عبر إدارة المنصة.",
       },
-      { property: "og:title", content: "دارك العقارية | تمليك وإيجار العقارات" },
+      { property: "og:title", content: "عقارات منيا القمح الجديدة | تمليك وإيجار العقارات" },
       {
         property: "og:description",
         content: "منصة تسويق عقاري موثوقة: بيانات محمية، إعلانات مراجعة، وتواصل آمن عبر الإدارة.",

@@ -19,9 +19,9 @@ export const Route = createFileRoute("/auth")({
   }),
   head: () => ({
     meta: [
-      { title: "تسجيل الدخول | دارك العقارية" },
+      { title: "تسجيل الدخول | عقارات منيا القمح الجديدة" },
       { name: "description", content: "سجّل الدخول أو أنشئ حسابًا جديدًا لعرض وحدتك أو البحث عن عقار." },
-      { property: "og:title", content: "تسجيل الدخول | دارك العقارية" },
+      { property: "og:title", content: "تسجيل الدخول | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "حساب واحد يفتح لك قسمي التمليك والإيجار." },
     ],
   }),

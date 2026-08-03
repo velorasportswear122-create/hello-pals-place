@@ -14,9 +14,9 @@ import { Textarea } from "@/components/ui/textarea";
 export const Route = createFileRoute("/property/$id")({
   head: () => ({
     meta: [
-      { title: "تفاصيل الوحدة | دارك العقارية" },
+      { title: "تفاصيل الوحدة | عقارات منيا القمح الجديدة" },
       { name: "description", content: "تفاصيل الوحدة العقارية مع صور وفيديوهات للمشتركين، والعنوان محجوب." },
-      { property: "og:title", content: "تفاصيل الوحدة | دارك العقارية" },
+      { property: "og:title", content: "تفاصيل الوحدة | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "اطلب من الإدارة توصيلك بصاحب الوحدة بأمان." },
     ],
   }),
