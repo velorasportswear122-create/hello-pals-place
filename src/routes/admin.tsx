@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { REQUEST_STATUS_CLASS, REQUEST_STATUS_LABEL, type RequestStatus } from "@/lib/requests";
 import { ROLE_LABEL } from "@/lib/app-content";
-import { Trash2, Ban, ShieldCheck } from "lucide-react";
+import { Trash2, Ban, ShieldCheck, Pencil } from "lucide-react";
+import { COMMISSION, SUBSCRIPTION_PRICE } from "@/lib/app-content";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -90,6 +91,27 @@ function AdminPage() {
     },
     enabled: isAdmin,
   });
+
+  const reports = useQuery({
+    queryKey: ["admin-reports"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("reports")
+        .select("id,property_id,reason,resolved,created_at")
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+    enabled: isAdmin,
+  });
+
+  const resolveReport = async (id: string, resolved: boolean) => {
+    const { error } = await supabase.from("reports").update({ resolved }).eq("id", id);
+    if (error) {
+      toast.error("تعذر تحديث البلاغ");
+      return;
+    }
+    void reports.refetch();
+  };
 
   const toggleBan = async (id: string, banned: boolean) => {
     const { error } = await supabase
@@ -184,12 +206,19 @@ function AdminPage() {
     <AppShell>
       <main className="mt-8">
         <h1 className="text-xl font-bold">لوحة الأدمن</h1>
+        <Stats
+          props={props.data ?? []}
+          subs={subs.data ?? []}
+          reqs={reqs.data ?? []}
+          usersCount={users.data?.length ?? 0}
+        />
         <Tabs defaultValue="props" className="mt-4">
-          <TabsList className="w-full">
+          <TabsList className="w-full flex-wrap">
             <TabsTrigger value="props" className="flex-1">الإعلانات</TabsTrigger>
             <TabsTrigger value="users" className="flex-1">المستخدمون</TabsTrigger>
             <TabsTrigger value="subs" className="flex-1">الاشتراكات</TabsTrigger>
             <TabsTrigger value="reqs" className="flex-1">طلبات التواصل</TabsTrigger>
+            <TabsTrigger value="reports" className="flex-1">البلاغات</TabsTrigger>
           </TabsList>
 
           <TabsContent value="props" className="space-y-3">
@@ -208,6 +237,11 @@ function AdminPage() {
                   <Button size="sm" onClick={() => void setStatus(p.id, "approved")}>قبول</Button>
                   <Button size="sm" variant="secondary" onClick={() => void setStatus(p.id, "rejected")}>
                     رفض
+                  </Button>
+                  <Button size="sm" variant="secondary" asChild>
+                    <Link to="/edit-listing/$id" params={{ id: p.id }}>
+                      <Pencil className="size-4" /> تعديل
+                    </Link>
                   </Button>
                   <Button size="sm" variant="destructive" onClick={() => void removeProperty(p.id)}>
                     <Trash2 className="size-4" /> حذف
@@ -320,8 +354,87 @@ function AdminPage() {
               </div>
             ))}
           </TabsContent>
+
+          <TabsContent value="reports" className="space-y-3">
+            {reports.data?.length === 0 && (
+              <p className="mt-4 text-center text-sm text-muted-foreground">لا توجد بلاغات.</p>
+            )}
+            {reports.data?.map((r) => (
+              <div key={r.id} className="rounded-2xl border border-border bg-card p-4 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <Link to="/property/$id" params={{ id: r.property_id }} className="font-bold text-primary">
+                    عرض الوحدة
+                  </Link>
+                  <span
+                    className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                      r.resolved ? "bg-primary text-primary-foreground" : "bg-destructive text-destructive-foreground"
+                    }`}
+                  >
+                    {r.resolved ? "تمت المعالجة" : "جديد"}
+                  </span>
+                </div>
+                <p className="mt-2">{r.reason || "بدون سبب"}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {new Date(r.created_at).toLocaleString("ar-EG")}
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-3"
+                  variant={r.resolved ? "secondary" : "default"}
+                  onClick={() => void resolveReport(r.id, !r.resolved)}
+                >
+                  {r.resolved ? "إعادة فتح البلاغ" : "تمت المعالجة"}
+                </Button>
+              </div>
+            ))}
+          </TabsContent>
         </Tabs>
       </main>
     </AppShell>
+  );
+}
+
+function Stats({
+  props,
+  subs,
+  reqs,
+  usersCount,
+}: {
+  props: { status: string; section: string; price: number | string }[];
+  subs: { status: string }[];
+  reqs: { status: string }[];
+  usersCount: number;
+}) {
+  const approved = props.filter((p) => p.status === "approved");
+  const pending = props.filter((p) => p.status === "pending");
+  const activeSubs = subs.filter((s) => s.status === "active").length;
+  const subsRevenue = activeSubs * SUBSCRIPTION_PRICE;
+  const potentialCommission = approved.reduce(
+    (sum, p) =>
+      sum +
+      (p.section === "sale" ? Number(p.price) * 0.01 : Number(p.price) / 2),
+    0,
+  );
+
+  const items = [
+    { label: "إجمالي الإعلانات", value: String(props.length) },
+    { label: "بانتظار المراجعة", value: String(pending.length) },
+    { label: "المستخدمون", value: String(usersCount) },
+    { label: "اشتراكات نشطة", value: String(activeSubs) },
+    { label: "طلبات قيد المراجعة", value: String(reqs.filter((r) => r.status !== "accepted" && r.status !== "rejected").length) },
+    { label: "دخل الاشتراكات", value: formatEGP(subsRevenue) },
+    { label: "عمولات متوقعة", value: formatEGP(Math.round(potentialCommission)) },
+    { label: "نظام العمولة", value: `${COMMISSION.saleLabel} / ${COMMISSION.rentLabel}` },
+  ];
+
+  return (
+    <section className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {items.map((i) => (
+        <div key={i.label} className="rounded-2xl border border-border bg-card p-3 text-center">
+          <p className="text-[11px] text-muted-foreground">{i.label}</p>
+          <p className="mt-1 text-sm font-bold text-primary">{i.value}</p>
+        </div>
+      ))}
+    </section>
   );
 }

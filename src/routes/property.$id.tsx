@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Eye, Lock, MapPin, Phone, Send, Trash2 } from "lucide-react";
+import { Eye, Flag, Lock, MapPin, Pencil, Phone, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +39,7 @@ function PropertyPage() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   const { data: property } = useQuery({
     queryKey: ["property", id],
@@ -83,8 +84,26 @@ function PropertyPage() {
     enabled: Boolean(property) && (subscribed || isOwner || isAdmin),
   });
 
+  const { data: myRequest } = useQuery({
+    queryKey: ["my-request", id, user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("contact_requests")
+        .select("id,status")
+        .eq("property_id", id)
+        .eq("requester_id", user!.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: Boolean(user) && Boolean(property),
+  });
+
+  const requestAccepted = myRequest?.status === "accepted";
+
   const { data: privateInfo } = useQuery({
-    queryKey: ["private", id],
+    queryKey: ["private", id, requestAccepted],
     queryFn: async () => {
       const { data } = await supabase
         .from("property_private")
@@ -93,8 +112,21 @@ function PropertyPage() {
         .maybeSingle();
       return data;
     },
-    enabled: Boolean(property) && (isAdmin || isOwner),
+    enabled: Boolean(property) && (isAdmin || isOwner || requestAccepted),
   });
+
+  const sendReport = async () => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("reports")
+      .insert({ property_id: id, reporter_id: user.id, reason: reportReason });
+    if (error) {
+      toast.error("تعذر إرسال البلاغ");
+      return;
+    }
+    setReportReason("");
+    toast.success("تم إرسال البلاغ للإدارة");
+  };
 
   const sendRequest = async () => {
     if (!user) return;
@@ -216,15 +248,26 @@ function PropertyPage() {
             <span className="flex items-center gap-2">
               <Eye className="size-4 text-primary" /> عدد المشاهدات: {property.views ?? 0}
             </span>
-            <Button size="sm" variant="destructive" onClick={() => void removeListing()}>
-              <Trash2 className="size-4" /> حذف الإعلان
-            </Button>
+            <span className="flex gap-2">
+              <Button size="sm" variant="secondary" asChild>
+                <Link to="/edit-listing/$id" params={{ id }}>
+                  <Pencil className="size-4" /> تعديل
+                </Link>
+              </Button>
+              <Button size="sm" variant="destructive" onClick={() => void removeListing()}>
+                <Trash2 className="size-4" /> حذف
+              </Button>
+            </span>
           </div>
         )}
 
-        {isAdmin || isOwner ? (
+        {isAdmin || isOwner || requestAccepted ? (
           <div className="rounded-2xl border border-primary/40 bg-card p-4 text-sm">
-            <p className="font-bold text-primary">بيانات محجوبة (الإدارة والمالك فقط)</p>
+            <p className="font-bold text-primary">
+              {requestAccepted && !isAdmin && !isOwner
+                ? "تم قبول طلبك — بيانات التواصل الكاملة"
+                : "بيانات محجوبة (الإدارة والمالك فقط)"}
+            </p>
             <p className="mt-2 flex items-center gap-2">
               <MapPin className="size-4" /> {privateInfo?.address || "غير متاح"}
             </p>
@@ -234,13 +277,18 @@ function PropertyPage() {
           </div>
         ) : (
           <p className="flex items-center gap-2 rounded-2xl bg-secondary p-4 text-xs text-muted-foreground">
-            <Lock className="size-4" /> العنوان ورقم الهاتف لا يظهران إلا للإدارة.
+            <Lock className="size-4" /> العنوان الكامل ورقم الهاتف يظهران فقط بعد موافقة الإدارة على طلب المعاينة.
           </p>
         )}
 
         {subscribed && !isOwner && (
           <div className="rounded-2xl border border-border bg-card p-4">
             <p className="text-sm font-bold">اطلب من الإدارة توصيلك بصاحب الوحدة</p>
+            {myRequest && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                لديك طلب سابق على هذه الوحدة — تابع حالته من صفحة طلبات التواصل.
+              </p>
+            )}
             <Textarea
               className="mt-3"
               value={message}
@@ -249,6 +297,29 @@ function PropertyPage() {
             />
             <Button onClick={() => void sendRequest()} disabled={sending} className="mt-3 w-full">
               <Send className="size-4" /> إرسال الطلب للإدارة
+            </Button>
+          </div>
+        )}
+
+        {!isOwner && (
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <p className="flex items-center gap-2 text-sm font-bold">
+              <Flag className="size-4 text-destructive" /> الإبلاغ عن هذا الإعلان
+            </p>
+            <Textarea
+              className="mt-3"
+              rows={2}
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="سبب البلاغ (بيانات غير صحيحة، وحدة غير متاحة…)"
+            />
+            <Button
+              variant="secondary"
+              className="mt-3 w-full"
+              disabled={!reportReason.trim()}
+              onClick={() => void sendReport()}
+            >
+              إرسال البلاغ
             </Button>
           </div>
         )}
