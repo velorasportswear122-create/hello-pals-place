@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { REQUEST_STATUS_CLASS, REQUEST_STATUS_LABEL, type RequestStatus } from "@/lib/requests";
+import { ROLE_LABEL } from "@/lib/app-content";
+import { Trash2, Ban, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -63,6 +65,58 @@ function AdminPage() {
     },
     enabled: isAdmin,
   });
+
+  const users = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const [{ data: profiles }, { data: rolesRows }, { data: subsRows }, { data: propRows }] =
+        await Promise.all([
+          supabase
+            .from("profiles")
+            .select("id,full_name,phone,banned,banned_reason,banned_at,created_at")
+            .order("created_at", { ascending: false }),
+          supabase.from("user_roles").select("user_id,role"),
+          supabase.from("subscriptions").select("user_id,status,ends_at"),
+          supabase.from("properties").select("id,owner_id"),
+        ]);
+      return (profiles ?? []).map((p) => ({
+        ...p,
+        roles: (rolesRows ?? []).filter((r) => r.user_id === p.id).map((r) => r.role),
+        subscribed: (subsRows ?? []).some(
+          (s) => s.user_id === p.id && s.status === "active" && (!s.ends_at || new Date(s.ends_at) > new Date()),
+        ),
+        listings: (propRows ?? []).filter((r) => r.owner_id === p.id).length,
+      }));
+    },
+    enabled: isAdmin,
+  });
+
+  const toggleBan = async (id: string, banned: boolean) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        banned: !banned,
+        banned_reason: !banned ? notes[id] ?? "" : "",
+        banned_at: !banned ? new Date().toISOString() : null,
+      })
+      .eq("id", id);
+    if (error) {
+      toast.error("تعذر تحديث حالة المستخدم");
+      return;
+    }
+    toast.success(!banned ? "تم حظر المستخدم" : "تم فك الحظر");
+    void users.refetch();
+  };
+
+  const removeProperty = async (id: string) => {
+    const { error } = await supabase.from("properties").delete().eq("id", id);
+    if (error) {
+      toast.error("تعذر حذف الإعلان");
+      return;
+    }
+    toast.success("تم حذف الإعلان");
+    void props.refetch();
+  };
 
   const setRequestStatus = async (id: string, status: RequestStatus) => {
     const { error } = await supabase
@@ -133,6 +187,7 @@ function AdminPage() {
         <Tabs defaultValue="props" className="mt-4">
           <TabsList className="w-full">
             <TabsTrigger value="props" className="flex-1">الإعلانات</TabsTrigger>
+            <TabsTrigger value="users" className="flex-1">المستخدمون</TabsTrigger>
             <TabsTrigger value="subs" className="flex-1">الاشتراكات</TabsTrigger>
             <TabsTrigger value="reqs" className="flex-1">طلبات التواصل</TabsTrigger>
           </TabsList>
@@ -154,7 +209,58 @@ function AdminPage() {
                   <Button size="sm" variant="secondary" onClick={() => void setStatus(p.id, "rejected")}>
                     رفض
                   </Button>
+                  <Button size="sm" variant="destructive" onClick={() => void removeProperty(p.id)}>
+                    <Trash2 className="size-4" /> حذف
+                  </Button>
                 </div>
+              </div>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-3">
+            {users.data?.map((u) => (
+              <div key={u.id} className="rounded-2xl border border-border bg-card p-4 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold">{u.full_name || "بدون اسم"}</span>
+                  <span
+                    className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                      u.banned ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground"
+                    }`}
+                  >
+                    {u.banned ? "محظور" : "نشط"}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">رقم الموبايل: {u.phone || "غير متاح"}</p>
+                <p className="text-xs text-muted-foreground">
+                  الأدوار: {u.roles.length ? u.roles.map((r) => ROLE_LABEL[r] ?? r).join("، ") : "بدون"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  الاشتراك: {u.subscribed ? "مشترك" : "غير مشترك"} — عدد إعلاناته: {u.listings}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  تاريخ التسجيل: {new Date(u.created_at).toLocaleDateString("ar-EG")}
+                </p>
+                {u.banned && u.banned_reason && (
+                  <p className="mt-1 text-xs text-destructive">سبب الحظر: {u.banned_reason}</p>
+                )}
+                {!u.banned && (
+                  <Textarea
+                    className="mt-3"
+                    rows={2}
+                    placeholder="سبب الحظر (اختياري)"
+                    value={notes[u.id] ?? ""}
+                    onChange={(e) => setNotes((n) => ({ ...n, [u.id]: e.target.value }))}
+                  />
+                )}
+                <Button
+                  size="sm"
+                  className="mt-3"
+                  variant={u.banned ? "secondary" : "destructive"}
+                  onClick={() => void toggleBan(u.id, u.banned)}
+                >
+                  {u.banned ? <ShieldCheck className="size-4" /> : <Ban className="size-4" />}
+                  {u.banned ? "فك الحظر" : "حظر المستخدم"}
+                </Button>
               </div>
             ))}
           </TabsContent>
