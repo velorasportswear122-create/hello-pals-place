@@ -7,6 +7,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatEGP } from "@/lib/app-content";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { REQUEST_STATUS_CLASS, REQUEST_STATUS_LABEL, type RequestStatus } from "@/lib/requests";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -23,6 +26,7 @@ export const Route = createFileRoute("/admin")({
 function AdminPage() {
   const { user, roles, loading } = useAuth();
   const isAdmin = roles.includes("admin");
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   const props = useQuery({
     queryKey: ["admin-props"],
@@ -53,12 +57,25 @@ function AdminPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("contact_requests")
-        .select("id,property_id,requester_id,message,handled,created_at")
+        .select("id,property_id,requester_id,message,status,admin_note,created_at")
         .order("created_at", { ascending: false });
       return data ?? [];
     },
     enabled: isAdmin,
   });
+
+  const setRequestStatus = async (id: string, status: RequestStatus) => {
+    const { error } = await supabase
+      .from("contact_requests")
+      .update({ status, admin_note: notes[id] ?? "", handled: status === "accepted" })
+      .eq("id", id);
+    if (error) {
+      toast.error("تعذر تحديث الطلب");
+      return;
+    }
+    toast.success("تم تحديث الطلب وإرسال إشعار لصاحبه");
+    void reqs.refetch();
+  };
 
   const setStatus = async (id: string, status: "approved" | "rejected") => {
     const { error } = await supabase.from("properties").update({ status }).eq("id", id);
@@ -159,11 +176,41 @@ function AdminPage() {
           <TabsContent value="reqs" className="space-y-3">
             {reqs.data?.map((r) => (
               <div key={r.id} className="rounded-2xl border border-border bg-card p-4 text-sm">
-                <Link to="/property/$id" params={{ id: r.property_id }} className="font-bold text-primary">
-                  عرض الوحدة
-                </Link>
+                <div className="flex items-center justify-between gap-2">
+                  <Link
+                    to="/property/$id"
+                    params={{ id: r.property_id }}
+                    className="font-bold text-primary"
+                  >
+                    عرض الوحدة
+                  </Link>
+                  <span
+                    className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                      REQUEST_STATUS_CLASS[r.status as RequestStatus]
+                    }`}
+                  >
+                    {REQUEST_STATUS_LABEL[r.status as RequestStatus]}
+                  </span>
+                </div>
                 <p className="mt-1">{r.message || "بدون رسالة"}</p>
-                <p className="text-xs text-muted-foreground">{r.handled ? "تمت المتابعة" : "جديد"}</p>
+                <Textarea
+                  className="mt-3"
+                  rows={2}
+                  placeholder="ملاحظة للمستخدم (اختياري)"
+                  value={notes[r.id] ?? r.admin_note ?? ""}
+                  onChange={(e) => setNotes((n) => ({ ...n, [r.id]: e.target.value }))}
+                />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => void setRequestStatus(r.id, "reviewing")}>
+                    قيد المراجعة
+                  </Button>
+                  <Button size="sm" onClick={() => void setRequestStatus(r.id, "accepted")}>
+                    قبول وتوصيل
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => void setRequestStatus(r.id, "rejected")}>
+                    رفض
+                  </Button>
+                </div>
               </div>
             ))}
           </TabsContent>
