@@ -71,11 +71,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
+                <Link to="/search" search={{ section: "", city: "", min: 0, max: 0, rooms: 0 }}>
+                  <SearchIcon className="ms-2 size-4" /> بحث وتصفية
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to="/subscribe">الاشتراك الشهري</Link>
               </DropdownMenuItem>
               {user && (
                 <DropdownMenuItem asChild>
-                  <Link to="/new-listing">
+                  <Link to="/new-listing" search={{ section: "sale" }}>
                     <Building2 className="ms-2 size-4" /> إضافة وحدة
                   </Link>
                 </DropdownMenuItem>
