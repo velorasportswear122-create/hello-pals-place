@@ -115,17 +115,14 @@ function SectionCard({
         loading="lazy"
         width={800}
         height={1000}
-        className="absolute inset-x-0 top-0 h-2/3 w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+        className="absolute inset-x-0 top-0 h-2/3 w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
-      <div
-        className={`relative z-10 p-4 text-center ${tone === "gold" ? "text-primary-foreground" : "text-foreground"}`}
-      >
+      <span className="absolute inset-x-0 top-1/3 bottom-0 bg-gradient-to-t from-black/70 to-transparent" />
+      <div className="relative z-10 p-4 text-center text-white">
         <p className="text-xl font-bold">{title}</p>
         <p className="mt-1 text-xs opacity-85">{sub}</p>
         <span
-          className={`mx-auto mt-3 flex size-8 items-center justify-center rounded-full ${
-            tone === "gold" ? "bg-primary-foreground/85 text-primary" : "bg-primary text-primary-foreground"
-          }`}
+          className="mx-auto mt-3 flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground"
         >
           <ChevronLeft className="size-4" />
         </span>

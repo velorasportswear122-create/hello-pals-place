@@ -57,7 +57,7 @@ function AccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-0">
       <div className="mx-auto w-full max-w-md sm:max-w-2xl">
         <header className="relative">
           <div className="flex items-center justify-between px-5 pt-6">
@@ -101,7 +101,7 @@ function AccountPage() {
           </div>
         </header>
 
-        <main className="mt-6 rounded-t-[2rem] bg-panel px-4 pb-16 pt-6 text-panel-foreground">
+        <main className="mt-6 min-h-[60vh] rounded-t-[2rem] bg-panel px-4 pb-20 pt-6 text-panel-foreground">
           <div className="space-y-3">
             {OPTIONS[section].map((o: (typeof OPTIONS)["sale"][number]) => (
               <button
