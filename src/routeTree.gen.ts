@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as RequestsRouteImport } from './routes/requests'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as ListingsSectionRouteImport } from './routes/listings.$section'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
@@ -55,6 +56,11 @@ const RequestsRoute = RequestsRouteImport.update({
   path: '/requests',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubscribeRoute = SubscribeRouteImport.update({
   id: '/subscribe',
   path: '/subscribe',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/requests': typeof RequestsRoute
+  '/search': typeof SearchRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/$section': typeof ListingsSectionRoute
   '/property/$id': typeof PropertyIdRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/requests': typeof RequestsRoute
+  '/search': typeof SearchRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/$section': typeof ListingsSectionRoute
   '/property/$id': typeof PropertyIdRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/requests': typeof RequestsRoute
+  '/search': typeof SearchRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/$section': typeof ListingsSectionRoute
   '/property/$id': typeof PropertyIdRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/new-listing'
     | '/notifications'
     | '/requests'
+    | '/search'
     | '/subscribe'
     | '/listings/$section'
     | '/property/$id'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/new-listing'
     | '/notifications'
     | '/requests'
+    | '/search'
     | '/subscribe'
     | '/listings/$section'
     | '/property/$id'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/new-listing'
     | '/notifications'
     | '/requests'
+    | '/search'
     | '/subscribe'
     | '/listings/$section'
     | '/property/$id'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   NewListingRoute: typeof NewListingRoute
   NotificationsRoute: typeof NotificationsRoute
   RequestsRoute: typeof RequestsRoute
+  SearchRoute: typeof SearchRoute
   SubscribeRoute: typeof SubscribeRoute
   ListingsSectionRoute: typeof ListingsSectionRoute
   PropertyIdRoute: typeof PropertyIdRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subscribe': {
       id: '/subscribe'
       path: '/subscribe'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewListingRoute: NewListingRoute,
   NotificationsRoute: NotificationsRoute,
   RequestsRoute: RequestsRoute,
+  SearchRoute: SearchRoute,
   SubscribeRoute: SubscribeRoute,
   ListingsSectionRoute: ListingsSectionRoute,
   PropertyIdRoute: PropertyIdRoute,
