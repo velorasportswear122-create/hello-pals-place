@@ -11,9 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "لوحة الأدمن | دارك العقارية" },
+      { title: "لوحة الأدمن | عقارات منيا القمح الجديدة" },
       { name: "description", content: "مراجعة الإعلانات، تفعيل الاشتراكات، ومتابعة طلبات التواصل." },
-      { property: "og:title", content: "لوحة الأدمن | دارك العقارية" },
+      { property: "og:title", content: "لوحة الأدمن | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "إدارة كاملة للإعلانات والمستخدمين والطلبات." },
     ],
   }),

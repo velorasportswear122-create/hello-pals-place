@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Bell, Menu, LogOut, Shield, Building2 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-minya.png";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -25,9 +25,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           >
             <Bell className="size-5" />
           </button>
-          <Link to="/" className="flex flex-col items-center gap-1">
-            <img src={logo} alt="شعار دارك العقارية" width={56} height={56} className="size-14" />
-            <span className="text-lg font-bold text-primary">دارك العقارية</span>
+          <Link to="/" className="flex min-w-0 flex-col items-center gap-1 px-2 text-center">
+            <img src={logo} alt="شعار عقارات منيا القمح الجديدة" width={56} height={56} className="size-14" />
+            <span className="text-base font-bold leading-tight text-primary">
+              عقارات منيا القمح الجديدة
+            </span>
             <span className="text-[11px] text-muted-foreground">منصة تسويق عقاري موثوقة</span>
           </Link>
           <DropdownMenu>

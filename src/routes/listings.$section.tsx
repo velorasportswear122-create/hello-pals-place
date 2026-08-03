@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/listings/$section")({
   head: () => ({
     meta: [
-      { title: "الوحدات المتاحة | دارك العقارية" },
+      { title: "الوحدات المتاحة | عقارات منيا القمح الجديدة" },
       { name: "description", content: "تصفح الوحدات المعروضة للتمليك أو الإيجار مع بيانات أساسية آمنة." },
-      { property: "og:title", content: "الوحدات المتاحة | دارك العقارية" },
+      { property: "og:title", content: "الوحدات المتاحة | عقارات منيا القمح الجديدة" },
       { property: "og:description", content: "وحدات مراجعة من الإدارة، والتفاصيل الكاملة للمشتركين." },
     ],
   }),
