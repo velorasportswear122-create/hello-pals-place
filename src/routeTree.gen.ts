@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as ListingsRouteImport } from './routes/listings.'
 import { Route as PropertyRouteImport } from './routes/property.'
@@ -26,9 +28,19 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewListingRoute = NewListingRouteImport.update({
+  id: '/new-listing',
+  path: '/new-listing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubscribeRoute = SubscribeRouteImport.update({
@@ -50,7 +62,9 @@ const PropertyRoute = PropertyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/new-listing': typeof NewListingRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/': typeof ListingsRoute
   '/property/': typeof PropertyRoute
@@ -58,7 +72,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/new-listing': typeof NewListingRoute
   '/subscribe': typeof SubscribeRoute
   '/listings': typeof ListingsRoute
   '/property': typeof PropertyRoute
@@ -67,7 +83,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/new-listing': typeof NewListingRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/': typeof ListingsRoute
   '/property/': typeof PropertyRoute
@@ -75,14 +93,31 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/account' | '/auth' | '/subscribe' | '/listings/' | '/property/'
+    | '/'
+    | '/account'
+    | '/admin'
+    | '/auth'
+    | '/new-listing'
+    | '/subscribe'
+    | '/listings/'
+    | '/property/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/auth' | '/subscribe' | '/listings' | '/property'
+  to:
+    | '/'
+    | '/account'
+    | '/admin'
+    | '/auth'
+    | '/new-listing'
+    | '/subscribe'
+    | '/listings'
+    | '/property'
   id:
     | '__root__'
     | '/'
     | '/account'
+    | '/admin'
     | '/auth'
+    | '/new-listing'
     | '/subscribe'
     | '/listings/'
     | '/property/'
@@ -91,7 +126,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  NewListingRoute: typeof NewListingRoute
   SubscribeRoute: typeof SubscribeRoute
   ListingsRoute: typeof ListingsRoute
   PropertyRoute: typeof PropertyRoute
@@ -113,11 +150,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-listing': {
+      id: '/new-listing'
+      path: '/new-listing'
+      fullPath: '/new-listing'
+      preLoaderRoute: typeof NewListingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/subscribe': {
@@ -147,7 +198,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  NewListingRoute: NewListingRoute,
   SubscribeRoute: SubscribeRoute,
   ListingsRoute: ListingsRoute,
   PropertyRoute: PropertyRoute,
