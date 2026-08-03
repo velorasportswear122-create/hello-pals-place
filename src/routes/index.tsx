@@ -72,6 +72,23 @@ function Index() {
           </ul>
         </section>
 
+        <section className="mt-4 rounded-3xl border border-primary/40 bg-card p-5 text-center">
+          <h2 className="text-base font-bold text-primary">عمولة المنصة</h2>
+          <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
+            <div className="rounded-2xl bg-secondary p-3">
+              <p className="font-bold">تمليك</p>
+              <p className="mt-1 text-muted-foreground">{COMMISSION.saleLabel}</p>
+            </div>
+            <div className="rounded-2xl bg-secondary p-3">
+              <p className="font-bold">إيجار</p>
+              <p className="mt-1 text-muted-foreground">{COMMISSION.rentLabel}</p>
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] text-muted-foreground">
+            العمولة تُحصّل عبر الإدارة بعد إتمام الصفقة فقط.
+          </p>
+        </section>
+
         <Link
           to="/subscribe"
           className="mt-6 flex items-center justify-between rounded-2xl px-6 py-4 text-primary-foreground shadow-[var(--shadow-soft)]"
