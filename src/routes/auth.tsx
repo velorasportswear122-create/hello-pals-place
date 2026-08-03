@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { AppShell } from "@/components/AppShell";
 import { useAuth, type AppRole } from "@/hooks/useAuth";
 import type { Section } from "@/lib/app-content";
+import { isValidEgPhone, normalizePhone, phoneToEmail } from "@/lib/phone";
 
 type Search = { section?: Section | undefined; role?: AppRole | undefined };
 
@@ -32,7 +33,6 @@ function AuthPage() {
   const navigate = useNavigate();
   const { refresh } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">("signup");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -50,13 +50,15 @@ function AuthPage() {
     e.preventDefault();
     setBusy(true);
     try {
+      if (!isValidEgPhone(phone)) throw new Error("رقم الموبايل غير صحيح");
+      const email = phoneToEmail(phone);
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/`,
-            data: { full_name: fullName, phone },
+            data: { full_name: fullName, phone: normalizePhone(phone) },
           },
         });
         if (error) throw error;
@@ -83,21 +85,24 @@ function AuthPage() {
         </h1>
         <form onSubmit={submit} className="mt-6 space-y-4 rounded-3xl border border-border bg-card p-5">
           {mode === "signup" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="name">الاسم بالكامل</Label>
-                <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">رقم الموبايل</Label>
-                <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-                <p className="text-[11px] text-muted-foreground">رقمك لا يظهر لأي مستخدم، الإدارة فقط تراه.</p>
-              </div>
-            </>
+            <div className="space-y-2">
+              <Label htmlFor="name">الاسم بالكامل</Label>
+              <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+            </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">البريد الإلكتروني</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Label htmlFor="phone">رقم الموبايل</Label>
+            <Input
+              id="phone"
+              type="tel"
+              inputMode="numeric"
+              dir="ltr"
+              placeholder="01xxxxxxxxx"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+            <p className="text-[11px] text-muted-foreground">الدخول بالرقم فقط — رقمك لا يظهر لأي مستخدم، الإدارة فقط تراه.</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">كلمة المرور</Label>

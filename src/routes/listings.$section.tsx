@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { SECTION_LABEL, formatEGP, type Section } from "@/lib/app-content";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/listings/")({
+export const Route = createFileRoute("/listings/$section")({
   head: () => ({
     meta: [
       { title: "الوحدات المتاحة | دارك العقارية" },
