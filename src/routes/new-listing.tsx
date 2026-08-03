@@ -178,13 +178,80 @@ function NewListing() {
             <Textarea value={form.description} onChange={set("description")} rows={4} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
+            <Field label="نوع العقار">
+              <select
+                value={form.property_type}
+                onChange={set("property_type")}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                {PROPERTY_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </Field>
             <Field label="السعر (جنيه)"><Input type="number" value={form.price} onChange={set("price")} required /></Field>
             <Field label="المساحة (م²)"><Input type="number" value={form.area_m2} onChange={set("area_m2")} /></Field>
-            <Field label="عدد الغرف"><Input type="number" value={form.rooms} onChange={set("rooms")} /></Field>
-            <Field label="عدد الحمامات"><Input type="number" value={form.bathrooms} onChange={set("bathrooms")} /></Field>
+            {!isLand && (
+              <>
+                <Field label="عدد الغرف"><Input type="number" value={form.rooms} onChange={set("rooms")} /></Field>
+                <Field label="عدد الحمامات"><Input type="number" value={form.bathrooms} onChange={set("bathrooms")} /></Field>
+                <Field label="الدور"><Input value={form.floor} onChange={set("floor")} placeholder="مثال: الثالث" /></Field>
+                <Field label="التشطيب">
+                  <select
+                    value={form.finishing}
+                    onChange={set("finishing")}
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    <option value="">غير محدد</option>
+                    {FINISHING_TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </Field>
+              </>
+            )}
+            {isLand && (
+              <>
+                <Field label="نوع الأرض">
+                  <select
+                    value={form.land_type}
+                    onChange={set("land_type")}
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    {LAND_TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="داخل الكردون؟">
+                  <select
+                    value={form.in_cordon}
+                    onChange={set("in_cordon")}
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    <option value="yes">داخل الكردون</option>
+                    <option value="no">خارج الكردون</option>
+                  </select>
+                </Field>
+              </>
+            )}
             <Field label="المدينة"><Input value={form.city} onChange={set("city")} required /></Field>
             <Field label="المنطقة"><Input value={form.district} onChange={set("district")} /></Field>
           </div>
+
+          <Field label="المميزات">
+            <Textarea
+              value={form.features}
+              onChange={set("features")}
+              rows={2}
+              placeholder="مثال: أسانسير، جراج، تكييفات، إطلالة"
+            />
+          </Field>
+
+          <p className="rounded-2xl bg-secondary p-3 text-[11px] text-muted-foreground">
+            عمولة المنصة: {section === "sale" ? COMMISSION.saleLabel : COMMISSION.rentLabel} — تُحصّل بعد إتمام
+            الصفقة عن طريق الإدارة.
+          </p>
 
           <div className="rounded-2xl border border-primary/40 p-4">
             <p className="text-xs text-primary">هذه البيانات لا تظهر لأي مستخدم — الإدارة فقط</p>
@@ -195,17 +262,17 @@ function NewListing() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="media">صور وفيديوهات الوحدة</Label>
-            <Input
-              id="media"
-              type="file"
-              multiple
-              accept="image/*,video/*"
-              onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-            />
-            {files.length > 0 && (
-              <p className="text-[11px] text-muted-foreground">تم اختيار {files.length} ملف</p>
+            <Label htmlFor="images">صور الوحدة (حتى ٢٠ صورة)</Label>
+            <Input id="images" type="file" multiple accept="image/*" onChange={pickImages} />
+            {images.length > 0 && (
+              <p className="text-[11px] text-muted-foreground">تم اختيار {images.length} صورة</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="video">فيديو للوحدة (٣٠ - ٦٠ ثانية)</Label>
+            <Input id="video" type="file" accept="video/*" onChange={pickVideo} />
+            {video && <p className="text-[11px] text-muted-foreground">تم اختيار فيديو: {video.name}</p>}
           </div>
 
           <Button type="submit" disabled={busy} className="w-full">
