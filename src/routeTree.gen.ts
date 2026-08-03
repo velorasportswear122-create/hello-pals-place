@@ -15,8 +15,8 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
-import { Route as ListingsRouteImport } from './routes/listings.'
-import { Route as PropertyRouteImport } from './routes/property.'
+import { Route as ListingsSectionRouteImport } from './routes/listings.$section'
+import { Route as PropertyIdRouteImport } from './routes/property.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,14 +48,14 @@ const SubscribeRoute = SubscribeRouteImport.update({
   path: '/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ListingsRoute = ListingsRouteImport.update({
-  id: '/listings/',
-  path: '/listings/',
+const ListingsSectionRoute = ListingsSectionRouteImport.update({
+  id: '/listings/$section',
+  path: '/listings/$section',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertyRoute = PropertyRouteImport.update({
-  id: '/property/',
-  path: '/property/',
+const PropertyIdRoute = PropertyIdRouteImport.update({
+  id: '/property/$id',
+  path: '/property/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -66,8 +66,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/new-listing': typeof NewListingRoute
   '/subscribe': typeof SubscribeRoute
-  '/listings/': typeof ListingsRoute
-  '/property/': typeof PropertyRoute
+  '/listings/$section': typeof ListingsSectionRoute
+  '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,8 +76,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/new-listing': typeof NewListingRoute
   '/subscribe': typeof SubscribeRoute
-  '/listings': typeof ListingsRoute
-  '/property': typeof PropertyRoute
+  '/listings/$section': typeof ListingsSectionRoute
+  '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,8 +87,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/new-listing': typeof NewListingRoute
   '/subscribe': typeof SubscribeRoute
-  '/listings/': typeof ListingsRoute
-  '/property/': typeof PropertyRoute
+  '/listings/$section': typeof ListingsSectionRoute
+  '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,8 +99,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/new-listing'
     | '/subscribe'
-    | '/listings/'
-    | '/property/'
+    | '/listings/$section'
+    | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,8 +109,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/new-listing'
     | '/subscribe'
-    | '/listings'
-    | '/property'
+    | '/listings/$section'
+    | '/property/$id'
   id:
     | '__root__'
     | '/'
@@ -119,8 +119,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/new-listing'
     | '/subscribe'
-    | '/listings/'
-    | '/property/'
+    | '/listings/$section'
+    | '/property/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,8 +130,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   NewListingRoute: typeof NewListingRoute
   SubscribeRoute: typeof SubscribeRoute
-  ListingsRoute: typeof ListingsRoute
-  PropertyRoute: typeof PropertyRoute
+  ListingsSectionRoute: typeof ListingsSectionRoute
+  PropertyIdRoute: typeof PropertyIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -178,18 +178,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/listings/': {
-      id: '/listings/'
-      path: '/listings'
-      fullPath: '/listings/'
-      preLoaderRoute: typeof ListingsRouteImport
+    '/listings/$section': {
+      id: '/listings/$section'
+      path: '/listings/$section'
+      fullPath: '/listings/$section'
+      preLoaderRoute: typeof ListingsSectionRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/property/': {
-      id: '/property/'
-      path: '/property'
-      fullPath: '/property/'
-      preLoaderRoute: typeof PropertyRouteImport
+    '/property/$id': {
+      id: '/property/$id'
+      path: '/property/$id'
+      fullPath: '/property/$id'
+      preLoaderRoute: typeof PropertyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -202,19 +202,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   NewListingRoute: NewListingRoute,
   SubscribeRoute: SubscribeRoute,
-  ListingsRoute: ListingsRoute,
-  PropertyRoute: PropertyRoute,
+  ListingsSectionRoute: ListingsSectionRoute,
+  PropertyIdRoute: PropertyIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

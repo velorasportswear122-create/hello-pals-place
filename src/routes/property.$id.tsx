@@ -11,7 +11,7 @@ import { formatEGP } from "@/lib/app-content";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-export const Route = createFileRoute("/property/")({
+export const Route = createFileRoute("/property/$id")({
   head: () => ({
     meta: [
       { title: "تفاصيل الوحدة | دارك العقارية" },
