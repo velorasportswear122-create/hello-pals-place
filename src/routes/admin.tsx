@@ -62,7 +62,10 @@ function AdminPage() {
 
   const setStatus = async (id: string, status: "approved" | "rejected") => {
     const { error } = await supabase.from("properties").update({ status }).eq("id", id);
-    if (error) return toast.error("تعذر التحديث");
+    if (error) {
+      toast.error("تعذر التحديث");
+      return;
+    }
     toast.success("تم التحديث");
     void props.refetch();
   };
@@ -74,7 +77,10 @@ function AdminPage() {
       .from("subscriptions")
       .update({ status: "active", starts_at: new Date().toISOString(), ends_at: ends.toISOString() })
       .eq("id", id);
-    if (error) return toast.error("تعذر التفعيل");
+    if (error) {
+      toast.error("تعذر التفعيل");
+      return;
+    }
     toast.success("تم تفعيل الاشتراك");
     void subs.refetch();
   };

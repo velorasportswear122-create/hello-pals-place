@@ -9,7 +9,7 @@ import { AppShell } from "@/components/AppShell";
 import { useAuth, type AppRole } from "@/hooks/useAuth";
 import type { Section } from "@/lib/app-content";
 
-type Search = { section?: Section; role?: AppRole };
+type Search = { section?: Section | undefined; role?: AppRole | undefined };
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): Search => ({

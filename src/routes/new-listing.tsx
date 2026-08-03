@@ -27,7 +27,8 @@ export const Route = createFileRoute("/new-listing")({
 });
 
 function NewListing() {
-  const { section } = Route.useSearch();
+  const search = Route.useSearch();
+  const section: Section = search.section === "rent" ? "rent" : "sale";
   const navigate = useNavigate();
   const { user, roles } = useAuth();
   const [files, setFiles] = useState<File[]>([]);

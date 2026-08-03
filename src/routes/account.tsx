@@ -35,7 +35,8 @@ const OPTIONS: Record<Section, { role: AppRole; title: string; sub: string; colo
 };
 
 function AccountPage() {
-  const { section } = Route.useSearch();
+  const search = Route.useSearch();
+  const section: Section = search.section === "rent" ? "rent" : "sale";
   const navigate = useNavigate();
   const { user, roles, refresh } = useAuth();
 
@@ -102,7 +103,7 @@ function AccountPage() {
 
         <main className="mt-6 rounded-t-[2rem] bg-panel px-4 pb-16 pt-6 text-panel-foreground">
           <div className="space-y-3">
-            {OPTIONS[section].map((o) => (
+            {OPTIONS[section].map((o: (typeof OPTIONS)["sale"][number]) => (
               <button
                 key={o.role}
                 type="button"
