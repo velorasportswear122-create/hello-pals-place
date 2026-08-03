@@ -90,18 +90,27 @@ export type Database = {
       }
       profiles: {
         Row: {
+          banned: boolean
+          banned_at: string | null
+          banned_reason: string
           created_at: string
           full_name: string
           id: string
           phone: string | null
         }
         Insert: {
+          banned?: boolean
+          banned_at?: string | null
+          banned_reason?: string
           created_at?: string
           full_name?: string
           id: string
           phone?: string | null
         }
         Update: {
+          banned?: boolean
+          banned_at?: string | null
+          banned_reason?: string
           created_at?: string
           full_name?: string
           id?: string
@@ -117,13 +126,20 @@ export type Database = {
           created_at: string
           description: string
           district: string | null
+          features: string
+          finishing: string | null
+          floor: string | null
           id: string
+          in_cordon: boolean | null
+          land_type: string | null
           owner_id: string
           price: number
+          property_type: string
           rooms: number | null
           section: Database["public"]["Enums"]["listing_section"]
           status: Database["public"]["Enums"]["listing_status"]
           title: string
+          views: number
         }
         Insert: {
           area_m2?: number | null
@@ -132,13 +148,20 @@ export type Database = {
           created_at?: string
           description?: string
           district?: string | null
+          features?: string
+          finishing?: string | null
+          floor?: string | null
           id?: string
+          in_cordon?: boolean | null
+          land_type?: string | null
           owner_id: string
           price?: number
+          property_type?: string
           rooms?: number | null
           section: Database["public"]["Enums"]["listing_section"]
           status?: Database["public"]["Enums"]["listing_status"]
           title: string
+          views?: number
         }
         Update: {
           area_m2?: number | null
@@ -147,13 +170,20 @@ export type Database = {
           created_at?: string
           description?: string
           district?: string | null
+          features?: string
+          finishing?: string | null
+          floor?: string | null
           id?: string
+          in_cordon?: boolean | null
+          land_type?: string | null
           owner_id?: string
           price?: number
+          property_type?: string
           rooms?: number | null
           section?: Database["public"]["Enums"]["listing_section"]
           status?: Database["public"]["Enums"]["listing_status"]
           title?: string
+          views?: number
         }
         Relationships: []
       }
@@ -284,6 +314,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_property_views: {
+        Args: { _property_id: string }
+        Returns: undefined
+      }
+      is_banned: { Args: { _user_id: string }; Returns: boolean }
       is_subscribed: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {

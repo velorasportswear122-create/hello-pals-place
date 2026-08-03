@@ -4,7 +4,7 @@ import { Lock, MapPin, SearchIcon, X } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { formatEGP } from "@/lib/app-content";
+import { FINISHING_TYPES, PROPERTY_TYPES, formatEGP } from "@/lib/app-content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,9 +15,21 @@ type SearchFilters = {
   min: number;
   max: number;
   rooms: number;
+  ptype: string;
+  finishing: string;
+  minArea: number;
 };
 
-const EMPTY: SearchFilters = { section: "", city: "", min: 0, max: 0, rooms: 0 };
+const EMPTY: SearchFilters = {
+  section: "",
+  city: "",
+  min: 0,
+  max: 0,
+  rooms: 0,
+  ptype: "",
+  finishing: "",
+  minArea: 0,
+};
 
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>): SearchFilters => ({
@@ -26,6 +38,9 @@ export const Route = createFileRoute("/search")({
     min: Number(search["min"]) > 0 ? Number(search["min"]) : 0,
     max: Number(search["max"]) > 0 ? Number(search["max"]) : 0,
     rooms: Number(search["rooms"]) > 0 ? Number(search["rooms"]) : 0,
+    ptype: typeof search["ptype"] === "string" ? search["ptype"].slice(0, 20) : "",
+    finishing: typeof search["finishing"] === "string" ? search["finishing"].slice(0, 20) : "",
+    minArea: Number(search["minArea"]) > 0 ? Number(search["minArea"]) : 0,
   }),
   head: () => ({
     meta: [
@@ -66,6 +81,9 @@ function SearchPage() {
       if (filters.min) q = q.gte("price", filters.min);
       if (filters.max) q = q.lte("price", filters.max);
       if (filters.rooms) q = q.gte("rooms", filters.rooms);
+      if (filters.ptype) q = q.eq("property_type", filters.ptype);
+      if (filters.finishing) q = q.eq("finishing", filters.finishing);
+      if (filters.minArea) q = q.gte("area_m2", filters.minArea);
 
       const { data, error } = await q;
       if (error) throw error;
@@ -88,8 +106,16 @@ function SearchPage() {
     );
   }
 
-  const hasFilters =
-    Boolean(filters.section || filters.city || filters.min || filters.max || filters.rooms);
+  const hasFilters = Boolean(
+    filters.section ||
+      filters.city ||
+      filters.min ||
+      filters.max ||
+      filters.rooms ||
+      filters.ptype ||
+      filters.finishing ||
+      filters.minArea,
+  );
 
   return (
     <AppShell>
@@ -176,6 +202,46 @@ function SearchPage() {
                   {n === 0 ? "الكل" : `${n}+`}
                 </Button>
               ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">نوع العقار</Label>
+              <select
+                value={filters.ptype}
+                onChange={(e) => set({ ptype: e.target.value })}
+                className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">الكل</option>
+                {PROPERTY_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label className="text-xs">التشطيب</Label>
+              <select
+                value={filters.finishing}
+                onChange={(e) => set({ finishing: e.target.value })}
+                className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">الكل</option>
+                {FINISHING_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-span-2">
+              <Label className="text-xs" htmlFor="minArea">المساحة من (م²)</Label>
+              <Input
+                id="minArea"
+                type="number"
+                inputMode="numeric"
+                className="mt-2"
+                value={filters.minArea || ""}
+                onChange={(e) => set({ minArea: Number(e.target.value) || 0 })}
+              />
             </div>
           </div>
 

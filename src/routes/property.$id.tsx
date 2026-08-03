@@ -1,13 +1,22 @@
-import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Lock, MapPin, Phone, Send } from "lucide-react";
+import { Eye, Lock, MapPin, Phone, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { signedUrl } from "@/lib/media";
 import { useAuth } from "@/hooks/useAuth";
-import { formatEGP } from "@/lib/app-content";
+import {
+  COMMISSION,
+  FINISHING_TYPES,
+  LAND_TYPES,
+  PROPERTY_TYPES,
+  commissionFor,
+  formatEGP,
+  labelOf,
+  type Section,
+} from "@/lib/app-content";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -27,6 +36,7 @@ function PropertyPage() {
   const { id } = Route.useParams();
   const { user, roles, subscribed } = useAuth();
   const isAdmin = roles.includes("admin");
+  const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
 
@@ -41,6 +51,22 @@ function PropertyPage() {
   });
 
   const isOwner = property?.owner_id === user?.id;
+
+  useEffect(() => {
+    if (property?.status === "approved" && !isOwner) {
+      void supabase.rpc("increment_property_views", { _property_id: id });
+    }
+  }, [property?.status, isOwner, id]);
+
+  const removeListing = async () => {
+    const { error } = await supabase.from("properties").delete().eq("id", id);
+    if (error) {
+      toast.error("تعذر حذف الإعلان");
+      return;
+    }
+    toast.success("تم حذف الإعلان");
+    void navigate({ to: "/" });
+  };
 
   const { data: media } = useQuery({
     queryKey: ["media", id, subscribed, isOwner],
@@ -155,9 +181,46 @@ function PropertyPage() {
 
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           <Info label="المساحة" value={property.area_m2 ? `${property.area_m2} م²` : "-"} />
-          <Info label="الغرف" value={property.rooms != null ? String(property.rooms) : "-"} />
-          <Info label="الحمامات" value={property.bathrooms != null ? String(property.bathrooms) : "-"} />
+          <Info label="النوع" value={labelOf(PROPERTY_TYPES, property.property_type)} />
+          {property.property_type === "land" ? (
+            <>
+              <Info label="نوع الأرض" value={labelOf(LAND_TYPES, property.land_type)} />
+              <Info label="الكردون" value={property.in_cordon ? "داخل الكردون" : "خارج الكردون"} />
+            </>
+          ) : (
+            <>
+              <Info label="الغرف" value={property.rooms != null ? String(property.rooms) : "-"} />
+              <Info label="الحمامات" value={property.bathrooms != null ? String(property.bathrooms) : "-"} />
+              <Info label="الدور" value={property.floor || "-"} />
+              <Info label="التشطيب" value={labelOf(FINISHING_TYPES, property.finishing)} />
+            </>
+          )}
         </div>
+
+        {property.features && (
+          <p className="rounded-2xl border border-border bg-card p-4 text-sm">
+            <span className="font-bold text-primary">المميزات: </span>
+            {property.features}
+          </p>
+        )}
+
+        <p className="rounded-2xl bg-secondary p-4 text-xs text-muted-foreground">
+          عمولة المنصة:{" "}
+          {property.section === "sale" ? COMMISSION.saleLabel : COMMISSION.rentLabel} (تقريبًا{" "}
+          {commissionFor(property.section as Section, Number(property.price))}) — تُحصّل عبر الإدارة بعد إتمام
+          الصفقة.
+        </p>
+
+        {(isOwner || isAdmin) && (
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-card p-4 text-sm">
+            <span className="flex items-center gap-2">
+              <Eye className="size-4 text-primary" /> عدد المشاهدات: {property.views ?? 0}
+            </span>
+            <Button size="sm" variant="destructive" onClick={() => void removeListing()}>
+              <Trash2 className="size-4" /> حذف الإعلان
+            </Button>
+          </div>
+        )}
 
         {isAdmin || isOwner ? (
           <div className="rounded-2xl border border-primary/40 bg-card p-4 text-sm">
