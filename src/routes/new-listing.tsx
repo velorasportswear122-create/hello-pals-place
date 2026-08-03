@@ -6,6 +6,12 @@ import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SECTION_LABEL, type Section } from "@/lib/app-content";
+import {
+  COMMISSION,
+  FINISHING_TYPES,
+  LAND_TYPES,
+  PROPERTY_TYPES,
+} from "@/lib/app-content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +37,8 @@ function NewListing() {
   const section: Section = search.section === "rent" ? "rent" : "sale";
   const navigate = useNavigate();
   const { user, roles } = useAuth();
-  const [files, setFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<File[]>([]);
+  const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     title: "",
@@ -44,12 +51,52 @@ function NewListing() {
     district: "",
     address: "",
     contact_phone: "",
+    property_type: "apartment",
+    floor: "",
+    finishing: "",
+    features: "",
+    land_type: "building",
+    in_cordon: "yes",
   });
 
   const canPublish = roles.includes("seller") || roles.includes("landlord") || roles.includes("admin");
+  const isLand = form.property_type === "land";
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const pickImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = Array.from(e.target.files ?? []);
+    if (picked.length > 20) {
+      toast.error("الحد الأقصى ٢٠ صورة");
+      setImages(picked.slice(0, 20));
+      return;
+    }
+    setImages(picked);
+  };
+
+  const pickVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setVideo(null);
+      return;
+    }
+    const el = document.createElement("video");
+    el.preload = "metadata";
+    el.onloadedmetadata = () => {
+      URL.revokeObjectURL(el.src);
+      const d = el.duration;
+      if (Number.isFinite(d) && (d < 30 || d > 60)) {
+        toast.error("مدة الفيديو يجب أن تكون بين ٣٠ و٦٠ ثانية");
+        setVideo(null);
+        return;
+      }
+      setVideo(file);
+    };
+    el.src = URL.createObjectURL(file);
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,10 +112,16 @@ function NewListing() {
           description: form.description,
           price: Number(form.price || 0),
           area_m2: form.area_m2 ? Number(form.area_m2) : null,
-          rooms: form.rooms ? Number(form.rooms) : null,
-          bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
+          rooms: !isLand && form.rooms ? Number(form.rooms) : null,
+          bathrooms: !isLand && form.bathrooms ? Number(form.bathrooms) : null,
           city: form.city,
           district: form.district || null,
+          property_type: form.property_type,
+          floor: isLand ? null : form.floor || null,
+          finishing: isLand ? null : form.finishing || null,
+          features: form.features,
+          land_type: isLand ? form.land_type : null,
+          in_cordon: isLand ? form.in_cordon === "yes" : null,
         })
         .select("id")
         .single();
@@ -80,7 +133,8 @@ function NewListing() {
         contact_phone: form.contact_phone,
       });
 
-      for (const [i, file] of files.entries()) {
+      const uploads = video ? [...images, video] : images;
+      for (const [i, file] of uploads.entries()) {
         const path = `${user.id}/${prop.id}/${Date.now()}-${i}-${file.name.replace(/[^\w.-]/g, "_")}`;
         const up = await supabase.storage.from("property-media").upload(path, file);
         if (up.error) continue;
