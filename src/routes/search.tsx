@@ -49,7 +49,7 @@ function SearchPage() {
   const { user, subscribed } = useAuth();
 
   const set = (patch: Partial<SearchFilters>) =>
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    void navigate({ search: (prev: SearchFilters) => ({ ...prev, ...patch }) });
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["search", filters],
