@@ -189,8 +189,67 @@ function PropertyPage() {
             </Button>
           </div>
         )}
+
+        <SimilarUnits property={property} />
       </main>
     </AppShell>
+  );
+}
+
+function SimilarUnits({
+  property,
+}: {
+  property: { id: string; section: string; city: string; price: number | string; rooms: number | null };
+}) {
+  const price = Number(property.price) || 0;
+  const { data = [] } = useQuery({
+    queryKey: ["similar", property.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("properties")
+        .select("id,title,city,district,price,rooms,area_m2")
+        .eq("status", "approved")
+        .eq("section", property.section as "sale" | "rent")
+        .neq("id", property.id)
+        .gte("price", price * 0.7)
+        .lte("price", price * 1.3 || 1)
+        .limit(4);
+      return data ?? [];
+    },
+  });
+
+  if (data.length === 0) return null;
+
+  const sorted = [...data].sort((a, b) => {
+    const score = (p: (typeof data)[number]) =>
+      (p.city === property.city ? -2 : 0) + (p.rooms === property.rooms ? -1 : 0);
+    return score(a) - score(b);
+  });
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-sm font-bold text-primary">وحدات مشابهة قد تناسبك</h2>
+      <div className="grid gap-2">
+        {sorted.map((p) => (
+          <Link
+            key={p.id}
+            to="/property/$id"
+            params={{ id: p.id }}
+            className="flex items-center justify-between rounded-2xl border border-border bg-card p-4 text-sm"
+          >
+            <span>
+              <span className="font-bold">{p.title}</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                {p.city}
+                {p.district ? ` - ${p.district}` : ""}
+                {p.area_m2 ? ` · ${p.area_m2} م²` : ""}
+              </span>
+            </span>
+            <span className="font-bold text-primary">{formatEGP(Number(p.price))}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
