@@ -14,6 +14,8 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as NewListingRouteImport } from './routes/new-listing'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as ListingsSectionRouteImport } from './routes/listings.$section'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
@@ -43,6 +45,16 @@ const NewListingRoute = NewListingRouteImport.update({
   path: '/new-listing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestsRoute = RequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubscribeRoute = SubscribeRouteImport.update({
   id: '/subscribe',
   path: '/subscribe',
@@ -65,6 +77,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/new-listing': typeof NewListingRoute
+  '/notifications': typeof NotificationsRoute
+  '/requests': typeof RequestsRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/$section': typeof ListingsSectionRoute
   '/property/$id': typeof PropertyIdRoute
@@ -75,6 +89,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/new-listing': typeof NewListingRoute
+  '/notifications': typeof NotificationsRoute
+  '/requests': typeof RequestsRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/$section': typeof ListingsSectionRoute
   '/property/$id': typeof PropertyIdRoute
@@ -86,6 +102,8 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/new-listing': typeof NewListingRoute
+  '/notifications': typeof NotificationsRoute
+  '/requests': typeof RequestsRoute
   '/subscribe': typeof SubscribeRoute
   '/listings/$section': typeof ListingsSectionRoute
   '/property/$id': typeof PropertyIdRoute
@@ -98,6 +116,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/new-listing'
+    | '/notifications'
+    | '/requests'
     | '/subscribe'
     | '/listings/$section'
     | '/property/$id'
@@ -108,6 +128,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/new-listing'
+    | '/notifications'
+    | '/requests'
     | '/subscribe'
     | '/listings/$section'
     | '/property/$id'
@@ -118,6 +140,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/new-listing'
+    | '/notifications'
+    | '/requests'
     | '/subscribe'
     | '/listings/$section'
     | '/property/$id'
@@ -129,6 +153,8 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   NewListingRoute: typeof NewListingRoute
+  NotificationsRoute: typeof NotificationsRoute
+  RequestsRoute: typeof RequestsRoute
   SubscribeRoute: typeof SubscribeRoute
   ListingsSectionRoute: typeof ListingsSectionRoute
   PropertyIdRoute: typeof PropertyIdRoute
@@ -171,6 +197,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewListingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requests': {
+      id: '/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof RequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subscribe': {
       id: '/subscribe'
       path: '/subscribe'
@@ -201,6 +241,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   NewListingRoute: NewListingRoute,
+  NotificationsRoute: NotificationsRoute,
+  RequestsRoute: RequestsRoute,
   SubscribeRoute: SubscribeRoute,
   ListingsSectionRoute: ListingsSectionRoute,
   PropertyIdRoute: PropertyIdRoute,

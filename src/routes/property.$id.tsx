@@ -82,7 +82,7 @@ function PropertyPage() {
       return;
     }
     setMessage("");
-    toast.success("تم إرسال طلبك للإدارة وسيتم التواصل معك");
+    toast.success("تم إرسال طلبك للإدارة — تابع حالته من صفحة طلبات التواصل");
   };
 
   if (!user) {
