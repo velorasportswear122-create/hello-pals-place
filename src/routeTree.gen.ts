@@ -10,33 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as SubscribeRouteImport } from './routes/subscribe'
+import { Route as ListingsRouteImport } from './routes/listings.'
+import { Route as PropertyRouteImport } from './routes/property.'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscribeRoute = SubscribeRouteImport.update({
+  id: '/subscribe',
+  path: '/subscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings/',
+  path: '/listings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertyRoute = PropertyRouteImport.update({
+  id: '/property/',
+  path: '/property/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
+  '/subscribe': typeof SubscribeRoute
+  '/listings/': typeof ListingsRoute
+  '/property/': typeof PropertyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
+  '/subscribe': typeof SubscribeRoute
+  '/listings': typeof ListingsRoute
+  '/property': typeof PropertyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
+  '/subscribe': typeof SubscribeRoute
+  '/listings/': typeof ListingsRoute
+  '/property/': typeof PropertyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/account' | '/auth' | '/subscribe' | '/listings/' | '/property/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/account' | '/auth' | '/subscribe' | '/listings' | '/property'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/auth'
+    | '/subscribe'
+    | '/listings/'
+    | '/property/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AuthRoute: typeof AuthRoute
+  SubscribeRoute: typeof SubscribeRoute
+  ListingsRoute: typeof ListingsRoute
+  PropertyRoute: typeof PropertyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +106,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscribe': {
+      id: '/subscribe'
+      path: '/subscribe'
+      fullPath: '/subscribe'
+      preLoaderRoute: typeof SubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listings/': {
+      id: '/listings/'
+      path: '/listings'
+      fullPath: '/listings/'
+      preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/property/': {
+      id: '/property/'
+      path: '/property'
+      fullPath: '/property/'
+      preLoaderRoute: typeof PropertyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AuthRoute: AuthRoute,
+  SubscribeRoute: SubscribeRoute,
+  ListingsRoute: ListingsRoute,
+  PropertyRoute: PropertyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
