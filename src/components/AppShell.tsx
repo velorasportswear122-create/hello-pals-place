@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Menu, LogOut, Shield, Building2 } from "lucide-react";
+import { Bell, Menu, LogOut, Shield, Building2, Search as SearchIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import logo from "@/assets/logo-minya.png";
 import { useAuth } from "@/hooks/useAuth";
