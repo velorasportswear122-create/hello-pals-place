@@ -12,7 +12,7 @@ import { useState } from "react";
 import { REQUEST_STATUS_CLASS, REQUEST_STATUS_LABEL, type RequestStatus } from "@/lib/requests";
 import { ROLE_LABEL } from "@/lib/app-content";
 import { Trash2, Ban, ShieldCheck, Pencil } from "lucide-react";
-import { COMMISSION, commissionFor, SUBSCRIPTION_PRICE_EGP } from "@/lib/app-content";
+import { COMMISSION, SUBSCRIPTION_PRICE } from "@/lib/app-content";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -408,7 +408,7 @@ function Stats({
   const approved = props.filter((p) => p.status === "approved");
   const pending = props.filter((p) => p.status === "pending");
   const activeSubs = subs.filter((s) => s.status === "active").length;
-  const subsRevenue = activeSubs * SUBSCRIPTION_PRICE_EGP;
+  const subsRevenue = activeSubs * SUBSCRIPTION_PRICE;
   const potentialCommission = approved.reduce(
     (sum, p) =>
       sum +
