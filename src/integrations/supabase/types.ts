@@ -16,28 +16,37 @@ export type Database = {
     Tables: {
       contact_requests: {
         Row: {
+          admin_note: string
           created_at: string
           handled: boolean
           id: string
           message: string
           property_id: string
           requester_id: string
+          status: Database["public"]["Enums"]["request_status"]
+          updated_at: string
         }
         Insert: {
+          admin_note?: string
           created_at?: string
           handled?: boolean
           id?: string
           message?: string
           property_id: string
           requester_id: string
+          status?: Database["public"]["Enums"]["request_status"]
+          updated_at?: string
         }
         Update: {
+          admin_note?: string
           created_at?: string
           handled?: boolean
           id?: string
           message?: string
           property_id?: string
           requester_id?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          updated_at?: string
         }
         Relationships: [
           {
@@ -48,6 +57,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          link: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -251,6 +290,7 @@ export type Database = {
       app_role: "admin" | "seller" | "buyer" | "landlord" | "tenant"
       listing_section: "sale" | "rent"
       listing_status: "pending" | "approved" | "rejected"
+      request_status: "sent" | "reviewing" | "accepted" | "rejected"
       sub_status: "pending" | "active" | "expired" | "rejected"
     }
     CompositeTypes: {
@@ -382,6 +422,7 @@ export const Constants = {
       app_role: ["admin", "seller", "buyer", "landlord", "tenant"],
       listing_section: ["sale", "rent"],
       listing_status: ["pending", "approved", "rejected"],
+      request_status: ["sent", "reviewing", "accepted", "rejected"],
       sub_status: ["pending", "active", "expired", "rejected"],
     },
   },
