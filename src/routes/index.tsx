@@ -3,7 +3,7 @@ import { ChevronLeft, Crown, ShieldCheck, BadgeCheck, Users, CalendarClock } fro
 import { AppShell } from "@/components/AppShell";
 import saleImg from "@/assets/sale.jpg";
 import rentImg from "@/assets/rent.jpg";
-import { SUBSCRIPTION_PRICE } from "@/lib/app-content";
+import { COMMISSION, SUBSCRIPTION_PRICE } from "@/lib/app-content";
 
 export const Route = createFileRoute("/")({
   head: () => ({
