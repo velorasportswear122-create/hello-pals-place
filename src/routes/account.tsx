@@ -108,10 +108,10 @@ function AccountPage() {
                 key={o.role}
                 type="button"
                 onClick={() => void choose(o.role)}
-                className="flex w-full items-center gap-4 rounded-2xl bg-background/5 bg-white p-4 text-right shadow-sm"
+                className="flex w-full items-center gap-4 rounded-2xl bg-card-foreground/0 bg-[oklch(1_0_0)] p-4 text-right shadow-sm"
               >
                 <span className={`flex size-12 shrink-0 items-center justify-center rounded-full ${o.color}`}>
-                  <User className="size-6 text-white" />
+                  <User className="size-6 text-[oklch(1_0_0)]" />
                 </span>
                 <span className="flex-1">
                   <span className="block text-base font-bold">{o.title}</span>
@@ -123,10 +123,10 @@ function AccountPage() {
 
             <Link
               to="/admin"
-              className="flex w-full items-center gap-4 rounded-2xl bg-white p-4 text-right shadow-sm"
+              className="flex w-full items-center gap-4 rounded-2xl bg-[oklch(1_0_0)] p-4 text-right shadow-sm"
             >
               <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-violet-600">
-                <ShieldCheck className="size-6 text-white" />
+                <ShieldCheck className="size-6 text-[oklch(1_0_0)]" />
               </span>
               <span className="flex-1">
                 <span className="block text-base font-bold">أدمن</span>

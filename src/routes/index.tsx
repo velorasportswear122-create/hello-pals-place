@@ -118,7 +118,7 @@ function SectionCard({
         className="absolute inset-x-0 top-0 h-2/3 w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
       <span className="absolute inset-x-0 top-1/3 bottom-0 bg-gradient-to-t from-black/70 to-transparent" />
-      <div className="relative z-10 p-4 text-center text-white">
+      <div className="relative z-10 p-4 text-center text-foreground">
         <p className="text-xl font-bold">{title}</p>
         <p className="mt-1 text-xs opacity-85">{sub}</p>
         <span
