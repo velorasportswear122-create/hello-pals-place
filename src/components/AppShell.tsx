@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Bell, Menu, LogOut, Shield, Building2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import logo from "@/assets/logo-minya.png";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,17 +16,35 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, roles, signOut } = useAuth();
   const isAdmin = roles.includes("admin");
 
+  const { data: unread = 0 } = useQuery({
+    queryKey: ["unread-notifications", user?.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("read", false);
+      return count ?? 0;
+    },
+    enabled: Boolean(user),
+    refetchInterval: 20000,
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto w-full max-w-md px-5 pb-16 pt-6 sm:max-w-2xl">
         <header className="flex items-center justify-between">
-          <button
-            type="button"
+          <Link
+            to="/notifications"
             aria-label="التنبيهات"
-            className="rounded-full border border-border p-2 text-primary"
+            className="relative rounded-full border border-border p-2 text-primary"
           >
             <Bell className="size-5" />
-          </button>
+            {unread > 0 && (
+              <span className="absolute -end-1 -top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
+          </Link>
           <Link to="/" className="flex min-w-0 flex-col items-center gap-1 px-2 text-center">
             <img src={logo} alt="شعار عقارات منيا القمح الجديدة" width={56} height={56} className="size-14" />
             <span className="text-base font-bold leading-tight text-primary">
