@@ -80,6 +80,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </Link>
                 </DropdownMenuItem>
               )}
+              {user && (
+                <DropdownMenuItem asChild>
+                  <Link to="/requests">طلبات التواصل</Link>
+                </DropdownMenuItem>
+              )}
               {isAdmin && (
                 <DropdownMenuItem asChild>
                   <Link to="/admin">
