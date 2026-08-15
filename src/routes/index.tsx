@@ -45,7 +45,7 @@ function Index() {
             backgroundRepeat: 'repeat',
           }}
         />
-        <div className="relative z-10 px-4">
+        <div className="relative z-10 px-4 mb-6">
           <h1 className="text-center text-2xl font-bold whitespace-pre-line">
             {`'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n  شيل كلام دا و غير الصور و ضيف فخلفية صوره خفيفه`}
           </h1>
