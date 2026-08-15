@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, Crown, ShieldCheck, BadgeCheck, Users, CalendarClock } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import saleImg from "@/assets/real-estate-1.jpg";
-import rentImg from "@/assets/real-estate-2.jpg";
+import saleImg from "@/assets/real-estate-3.jpg";
+import rentImg from "@/assets/real-estate-4.jpg";
+import heroBg from "@/assets/hero-bg.jpg";
 import bgPattern from "@/assets/bg-pattern.png";
 import { COMMISSION, SUBSCRIPTION_PRICE } from "@/lib/app-content";
 
@@ -35,21 +36,25 @@ const features = [
 function Index() {
   return (
     <AppShell>
-      <main 
-        className="mt-8 relative min-h-[50vh]"
-      >
+      <main className="relative min-h-screen">
+        {/* Background Image Wrapper */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-[0.03] z-0"
+          className="absolute inset-0 z-0 opacity-20 pointer-events-none"
           style={{ 
-            backgroundImage: `url(${bgPattern})`,
-            backgroundRepeat: 'repeat',
+            backgroundImage: `url(${heroBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed'
           }}
         />
-        <div className="relative z-10 px-4 mb-6">
-          <h1 className="text-center text-2xl font-bold whitespace-pre-line">
-            {`'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n  شيل كلام دا و غير الصور و ضيف فخلفية صوره خفيفه`}
-          </h1>
-        </div>
+        
+        {/* Content Wrapper */}
+        <div className="relative z-10 pt-8">
+          <div className="px-4 mb-6">
+            <h1 className="text-center text-2xl font-bold whitespace-pre-line text-white drop-shadow-lg">
+              {`'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n\n\n'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\nشيل كلام دا و غير الصور و ضيف فخلفية صوره خفيفه`}
+            </h1>
+          </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
           <SectionCard
