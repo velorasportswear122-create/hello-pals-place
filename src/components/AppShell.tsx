@@ -71,7 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/search" search={{ section: "", city: "", min: 0, max: 0, rooms: 0 }}>
+                <Link to="/search" search={{ section: "", city: "", min: 0, max: 0, rooms: 0, ptype: "", finishing: "", minArea: 0 }}>
                   <SearchIcon className="ms-2 size-4" /> بحث وتصفية
                 </Link>
               </DropdownMenuItem>
