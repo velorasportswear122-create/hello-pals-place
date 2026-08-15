@@ -35,10 +35,8 @@ function Index() {
   return (
     <AppShell>
       <main className="mt-8">
-        <h1 className="text-center text-2xl font-bold">
-          {`Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.`}
-          <br />
-          hi
+        <h1 className="text-center text-2xl font-bold whitespace-pre-line">
+          {`'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            hi`}
         </h1>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
