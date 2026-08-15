@@ -39,7 +39,7 @@ function Index() {
       <main className="relative min-h-screen">
         {/* Background Image Wrapper */}
         <div 
-          className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+          className="absolute inset-0 z-0 opacity-[0.08] pointer-events-none"
           style={{ 
             backgroundImage: `url(${heroBg})`,
             backgroundSize: 'cover',
@@ -49,11 +49,14 @@ function Index() {
         />
         
         {/* Content Wrapper */}
-        <div className="relative z-10 pt-8">
-          <div className="px-4 mb-6">
-            <h1 className="text-center text-2xl font-bold whitespace-pre-line text-white drop-shadow-lg">
-              {`'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n\n\n'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\nشيل كلام دا و غير الصور و ضيف فخلفية صوره خفيفه`}
+        <div className="relative z-10 pt-8 px-4">
+          <div className="mb-6">
+            <h1 className="text-center text-3xl font-bold text-primary drop-shadow-sm">
+              عقارات منيا القمح الجديدة
             </h1>
+            <p className="text-center text-sm text-muted-foreground mt-2">
+              وجهتك الأولى للتمليك والإيجار في منيا القمح
+            </p>
           </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
