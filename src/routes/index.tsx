@@ -120,6 +120,7 @@ function Index() {
           </span>
           <span className="size-6" />
         </Link>
+        </div>
       </main>
     </AppShell>
   );
