@@ -199,6 +199,49 @@ function AdminPage() {
     void subs.refetch();
   };
 
+  const exportCSV = () => {
+    if (!props.data) return;
+    const csvData = props.data.map((p) => ({
+      العنوان: p.title,
+      السعر: p.price,
+      المدينة: p.city,
+      القسم: p.section === "sale" ? "تمليك" : "إيجار",
+      الحالة: p.status,
+      العمولة: p.section === "sale" ? Number(p.price) * 0.01 : Number(p.price) / 2,
+    }));
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `reports-${new Date().toLocaleDateString()}.csv`;
+    link.click();
+  };
+
+  const exportPDF = () => {
+    if (!props.data) return;
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.addFont("Cairo", "Cairo", "normal");
+    doc.setFont("Cairo");
+    
+    const tableData = props.data.map((p) => [
+      p.title,
+      formatEGP(Number(p.price)),
+      p.section === "sale" ? "تمليك" : "إيجار",
+      p.status,
+      formatEGP(p.section === "sale" ? Number(p.price) * 0.01 : Number(p.price) / 2),
+    ]);
+
+    autoTable(doc, {
+      head: [["العقار", "السعر", "القسم", "الحالة", "العمولة المتوقعة"]],
+      body: tableData,
+      styles: { font: "Cairo", halign: "right" },
+      headStyles: { fillColor: [184, 158, 101] },
+    });
+
+    doc.save(`reports-${new Date().toLocaleDateString()}.pdf`);
+  };
+
+
   if (loading) {
     return (
       <AppShell>
@@ -227,6 +270,14 @@ function AdminPage() {
     <AppShell>
       <main className="mt-8">
         <h1 className="text-xl font-bold">لوحة الأدمن</h1>
+        <div className="mt-4 flex flex-wrap gap-2">
+           <Button size="sm" variant="outline" onClick={exportCSV} className="gap-2 rounded-xl">
+             <Download className="size-4" /> تصدير CSV
+           </Button>
+           <Button size="sm" variant="outline" onClick={exportPDF} className="gap-2 rounded-xl">
+             <Download className="size-4" /> تصدير PDF
+           </Button>
+        </div>
         <Stats
           props={props.data ?? []}
           subs={subs.data ?? []}
@@ -325,6 +376,19 @@ function AdminPage() {
               <div key={s.id} className="rounded-2xl border border-border bg-card p-4 text-sm">
                 <p>الحالة: {s.status}</p>
                 <p className="text-xs text-muted-foreground">{s.payment_note || "بدون ملاحظة دفع"}</p>
+                {s.receiptSrc && (
+                   <div className="mt-2">
+                     <p className="mb-1 text-[10px] text-muted-foreground">إيصال الدفع:</p>
+                     <a 
+                      href={s.receiptSrc} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                     >
+                       <ImageIcon className="size-3" /> عرض الإيصال <ExternalLink className="size-3" />
+                     </a>
+                   </div>
+                )}
                 {s.status !== "active" && (
                   <Button size="sm" className="mt-3" onClick={() => void activate(s.id)}>
                     تفعيل الاشتراك
@@ -354,6 +418,24 @@ function AdminPage() {
                   </span>
                 </div>
                 <p className="mt-1">{r.message || "بدون رسالة"}</p>
+                {r.preferred_appointment && (
+                  <p className="mt-1 text-xs font-bold text-primary">
+                    الموعد المفضل: {new Date(r.preferred_appointment).toLocaleString("ar-EG")}
+                  </p>
+                )}
+                <div className="mt-3 flex gap-2">
+                   <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="flex-1 gap-2 rounded-xl"
+                    onClick={() => {
+                      setChatRequestId(r.id);
+                      setChatTitle(r.propertyTitle);
+                    }}
+                   >
+                     <MessageSquare className="size-4" /> محادثة
+                   </Button>
+                </div>
                 <Textarea
                   className="mt-3"
                   rows={2}
@@ -410,6 +492,14 @@ function AdminPage() {
             ))}
           </TabsContent>
         </Tabs>
+
+        {chatRequestId && (
+          <ChatDialog
+            requestId={chatRequestId}
+            title={chatTitle}
+            onClose={() => setChatRequestId(null)}
+          />
+        )}
       </main>
     </AppShell>
   );
