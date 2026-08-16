@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+// أضف نظام مراقبة للأخطاء مثل Sentry لمتابعة الاستثناءات والأعطال في الإنتاج.
 import { ChevronLeft, Crown, ShieldCheck, BadgeCheck, Users, CalendarClock } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import saleDesign from "@/assets/sale-design.jpg";
