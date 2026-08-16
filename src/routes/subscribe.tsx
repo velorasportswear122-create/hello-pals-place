@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Crown } from "lucide-react";
+import { Check, Crown, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,7 +32,9 @@ const perks = [
 function SubscribePage() {
   const { user, subscribed, refresh } = useAuth();
   const [note, setNote] = useState("");
+  const [receipt, setReceipt] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const { data: request, refetch } = useQuery({
     queryKey: ["my-sub", user?.id],
@@ -51,9 +53,34 @@ function SubscribePage() {
   const requestSub = async () => {
     if (!user) return;
     setBusy(true);
+    
+    let receiptUrl = "";
+    if (receipt) {
+      setUploading(true);
+      const fileExt = receipt.name.split(".").pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("property-media") // Reusing bucket for receipts
+        .upload(`receipts/${fileName}`, receipt);
+      
+      if (uploadError) {
+        toast.error("تعذر رفع إيصال الدفع");
+        setBusy(false);
+        setUploading(false);
+        return;
+      }
+      receiptUrl = uploadData.path;
+      setUploading(false);
+    }
+
     const { error } = await supabase
       .from("subscriptions")
-      .insert({ user_id: user.id, payment_note: note, amount_egp: SUBSCRIPTION_PRICE });
+      .insert({ 
+        user_id: user.id, 
+        payment_note: note, 
+        amount_egp: SUBSCRIPTION_PRICE,
+        receipt_url: receiptUrl 
+      });
     setBusy(false);
     if (error) {
       toast.error("تعذر إرسال طلب الاشتراك");
@@ -103,9 +130,33 @@ function SubscribePage() {
               onChange={(e) => setNote(e.target.value)}
               placeholder="طريقة الدفع أو رقم التحويل (اختياري)"
             />
-            <Button onClick={() => void requestSub()} disabled={busy} className="w-full">
-              إرسال طلب الاشتراك
+            <Button onClick={() => void requestSub()} disabled={busy || uploading} className="w-full">
+              {uploading ? (
+                <>
+                  <Loader2 className="ml-2 size-4 animate-spin" /> جارٍ الرفع...
+                </>
+              ) : (
+                "إرسال طلب الاشتراك"
+              )}
             </Button>
+            <div className="mt-2">
+              <label className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border p-3 text-xs hover:bg-muted/50 transition-colors">
+                <Upload className="size-4 text-primary" />
+                {receipt ? (
+                  <span className="flex items-center gap-1">
+                    <ImageIcon className="size-3" /> {receipt.name}
+                  </span>
+                ) : (
+                  "ارفع إيصال الدفع (اختياري)"
+                )}
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => setReceipt(e.target.files?.[0] || null)}
+                />
+              </label>
+            </div>
             <p className="text-center text-[11px] text-muted-foreground">
               تراجع الإدارة الدفع وتفعّل اشتراكك خلال وقت قصير.
             </p>

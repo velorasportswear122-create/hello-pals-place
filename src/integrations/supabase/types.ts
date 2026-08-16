@@ -21,6 +21,7 @@ export type Database = {
           handled: boolean
           id: string
           message: string
+          preferred_appointment: string | null
           property_id: string
           requester_id: string
           status: Database["public"]["Enums"]["request_status"]
@@ -32,6 +33,7 @@ export type Database = {
           handled?: boolean
           id?: string
           message?: string
+          preferred_appointment?: string | null
           property_id: string
           requester_id: string
           status?: Database["public"]["Enums"]["request_status"]
@@ -43,6 +45,7 @@ export type Database = {
           handled?: boolean
           id?: string
           message?: string
+          preferred_appointment?: string | null
           property_id?: string
           requester_id?: string
           status?: Database["public"]["Enums"]["request_status"]
@@ -54,6 +57,38 @@ export type Database = {
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          request_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          request_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          request_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "contact_requests"
             referencedColumns: ["id"]
           },
         ]
@@ -293,6 +328,7 @@ export type Database = {
           ends_at: string | null
           id: string
           payment_note: string | null
+          receipt_url: string | null
           starts_at: string | null
           status: Database["public"]["Enums"]["sub_status"]
           user_id: string
@@ -303,6 +339,7 @@ export type Database = {
           ends_at?: string | null
           id?: string
           payment_note?: string | null
+          receipt_url?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["sub_status"]
           user_id: string
@@ -313,6 +350,7 @@ export type Database = {
           ends_at?: string | null
           id?: string
           payment_note?: string | null
+          receipt_url?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["sub_status"]
           user_id?: string

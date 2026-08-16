@@ -38,6 +38,7 @@ function PropertyPage() {
   const isAdmin = roles.includes("admin");
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
+  const [appointment, setAppointment] = useState("");
   const [sending, setSending] = useState(false);
   const [reportReason, setReportReason] = useState("");
 
@@ -133,7 +134,7 @@ function PropertyPage() {
     setSending(true);
     const { error } = await supabase
       .from("contact_requests")
-      .insert({ property_id: id, requester_id: user.id, message });
+      .insert({ property_id: id, requester_id: user.id, message, preferred_appointment: appointment });
     setSending(false);
     if (error) {
       toast.error("لا يمكن إرسال الطلب. تأكد من تفعيل الاشتراك.");
@@ -293,8 +294,17 @@ function PropertyPage() {
               className="mt-3"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="اكتب استفسارك أو الوقت المناسب للتواصل"
+              placeholder="اكتب استفسارك للإدارة..."
             />
+            <div className="mt-3">
+              <label className="text-xs font-bold text-muted-foreground">موعد المعاينة المفضل (اختياري)</label>
+              <input
+                type="datetime-local"
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={appointment}
+                onChange={(e) => setAppointment(e.target.value)}
+              />
+            </div>
             <Button onClick={() => void sendRequest()} disabled={sending} className="mt-3 w-full">
               <Send className="size-4" /> إرسال الطلب للإدارة
             </Button>
