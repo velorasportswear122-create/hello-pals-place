@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Clock, Send } from "lucide-react";
+import { Check, Clock, Send, MessageSquare } from "lucide-react";
+import { useState } from "react";
+import { ChatDialog } from "@/components/ChatDialog";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,13 +35,15 @@ const STEP_ICON = [Send, Clock, Check];
 
 function RequestsPage() {
   const { user, loading } = useAuth();
+  const [chatRequestId, setChatRequestId] = useState<string | null>(null);
+  const [chatTitle, setChatTitle] = useState("");
 
   const { data } = useQuery({
     queryKey: ["my-requests", user?.id],
     queryFn: async () => {
       const { data: rows } = await supabase
         .from("contact_requests")
-        .select("id,property_id,message,status,admin_note,created_at")
+        .select("id,property_id,message,status,admin_note,preferred_appointment,created_at")
         .order("created_at", { ascending: false });
       const ids = [...new Set((rows ?? []).map((r) => r.property_id))];
       const { data: props } = ids.length
@@ -110,6 +114,11 @@ function RequestsPage() {
                 </div>
 
                 {r.message && <p className="mt-2 text-sm text-muted-foreground">{r.message}</p>}
+                {r.preferred_appointment && (
+                  <p className="mt-1 text-xs font-semibold text-primary">
+                    موعد المعاينة المقترح: {new Date(r.preferred_appointment).toLocaleString("ar-EG")}
+                  </p>
+                )}
 
                 <ol className="mt-4 flex items-center gap-1">
                   {REQUEST_STEPS.map((step, i) => {
@@ -145,10 +154,31 @@ function RequestsPage() {
                     رد الإدارة: {r.admin_note}
                   </p>
                 )}
+                {(status === "accepted" || status === "reviewing") && (
+                   <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="mt-3 w-full gap-2 rounded-xl"
+                    onClick={() => {
+                      setChatRequestId(r.id);
+                      setChatTitle(r.title);
+                    }}
+                   >
+                     <MessageSquare className="size-4" /> محادثة مع الإدارة
+                   </Button>
+                )}
               </article>
             );
           })}
         </div>
+
+        {chatRequestId && (
+          <ChatDialog
+            requestId={chatRequestId}
+            title={chatTitle}
+            onClose={() => setChatRequestId(null)}
+          />
+        )}
       </main>
     </AppShell>
   );
