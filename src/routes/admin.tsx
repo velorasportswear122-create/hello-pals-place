@@ -11,8 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { REQUEST_STATUS_CLASS, REQUEST_STATUS_LABEL, type RequestStatus } from "@/lib/requests";
 import { ROLE_LABEL } from "@/lib/app-content";
-import { Trash2, Ban, ShieldCheck, Pencil } from "lucide-react";
+import { Trash2, Ban, ShieldCheck, Pencil, Download, MessageSquare, ImageIcon, ExternalLink } from "lucide-react";
 import { COMMISSION, SUBSCRIPTION_PRICE } from "@/lib/app-content";
+import { ChatDialog } from "@/components/ChatDialog";
+import { signedUrl } from "@/lib/media";
+import Papa from "papaparse";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -30,6 +35,8 @@ function AdminPage() {
   const { user, roles, loading } = useAuth();
   const isAdmin = roles.includes("admin");
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [chatRequestId, setChatRequestId] = useState<string | null>(null);
+  const [chatTitle, setChatTitle] = useState("");
 
   const props = useQuery({
     queryKey: ["admin-props"],
@@ -48,9 +55,13 @@ function AdminPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("subscriptions")
-        .select("id,user_id,status,payment_note,created_at")
+        .select("id,user_id,status,payment_note,receipt_url,created_at")
         .order("created_at", { ascending: false });
-      return data ?? [];
+      
+      return Promise.all((data ?? []).map(async s => ({
+        ...s,
+        receiptSrc: s.receipt_url ? await signedUrl(s.receipt_url) : null
+      })));
     },
     enabled: isAdmin,
   });
@@ -58,11 +69,21 @@ function AdminPage() {
   const reqs = useQuery({
     queryKey: ["admin-reqs"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data: rows } = await supabase
         .from("contact_requests")
-        .select("id,property_id,requester_id,message,status,admin_note,created_at")
+        .select("id,property_id,requester_id,message,status,admin_note,preferred_appointment,created_at")
         .order("created_at", { ascending: false });
-      return data ?? [];
+      
+      const ids = [...new Set((rows ?? []).map((r) => r.property_id))];
+      const { data: props } = ids.length
+        ? await supabase.from("properties").select("id,title").in("id", ids)
+        : { data: [] };
+      const titles = new Map((props ?? []).map((p) => [p.id, p.title]));
+      
+      return (rows ?? []).map((r) => ({ 
+        ...r, 
+        propertyTitle: titles.get(r.property_id) ?? "وحدة عقارية" 
+      }));
     },
     enabled: isAdmin,
   });
