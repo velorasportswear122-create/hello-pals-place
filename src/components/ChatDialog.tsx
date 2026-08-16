@@ -22,8 +22,7 @@ interface ChatDialogProps {
 }
 
 export function ChatDialog({ requestId, title, onClose }: ChatDialogProps) {
-  const { user, roles } = useAuth();
-  const isAdmin = roles.includes("admin");
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -69,7 +68,10 @@ export function ChatDialog({ requestId, title, onClose }: ChatDialogProps) {
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      const viewport = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
     }
   }, [messages]);
 
@@ -107,7 +109,7 @@ export function ChatDialog({ requestId, title, onClose }: ChatDialogProps) {
         </div>
 
         {/* Messages area */}
-        <ScrollArea className="flex-1 p-4" viewportRef={scrollRef}>
+        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           <div className="space-y-4">
             {loading ? (
               <p className="text-center text-xs text-muted-foreground">جارٍ تحميل الرسائل...</p>
