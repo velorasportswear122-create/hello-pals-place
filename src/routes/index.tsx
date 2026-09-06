@@ -53,10 +53,14 @@ function Index() {
         {/* Content Wrapper */}
         <div className="relative z-10 pt-8 px-4">
           <div className="mb-6">
-            <h1 className="text-center text-3xl font-bold text-primary drop-shadow-sm">
+            <p className="mx-auto mb-3 w-fit rounded-full border border-primary/35 bg-primary/10 px-4 py-1 text-[11px] font-semibold tracking-wide text-primary">
+              منصة عقارية فاخرة
+            </p>
+            <h1 className="text-gold text-center text-3xl font-black leading-tight sm:text-4xl">
               عقارات منيا القمح الجديدة
             </h1>
-            <p className="text-center text-sm text-muted-foreground mt-2">
+            <div className="lux-hairline mx-auto mt-3 h-px w-40" />
+            <p className="text-center text-sm text-muted-foreground mt-3">
               وجهتك الأولى للتمليك والإيجار في منيا القمح
             </p>
           </div>
@@ -78,12 +82,13 @@ function Index() {
           />
         </div>
 
-        <section className="mt-6 rounded-3xl border border-border bg-card p-5">
+        <section className="lux-card mt-6 rounded-3xl p-5">
           <h2 className="text-center text-base font-bold">لماذا تختار منصتنا ؟</h2>
+          <div className="lux-hairline mx-auto mt-3 h-px w-24" />
           <ul className="mt-5 grid grid-cols-4 gap-2">
             {features.map((f) => (
               <li key={f.title} className="flex flex-col items-center gap-2 text-center">
-                <span className="rounded-full border border-primary/40 p-2 text-primary">
+                <span className="rounded-full border border-primary/40 bg-primary/10 p-2 text-primary transition-transform duration-300 hover:scale-110">
                   <f.icon className="size-5" />
                 </span>
                 <span className="text-[11px] font-semibold leading-tight">{f.title}</span>
@@ -93,14 +98,14 @@ function Index() {
           </ul>
         </section>
 
-        <section className="mt-4 rounded-3xl border border-primary/40 bg-card p-5 text-center">
-          <h2 className="text-base font-bold text-primary">عمولة المنصة</h2>
+        <section className="lux-card mt-4 rounded-3xl p-5 text-center">
+          <h2 className="text-gold text-base font-bold">عمولة المنصة</h2>
           <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
-            <div className="rounded-2xl bg-secondary p-3">
+            <div className="rounded-2xl border border-primary/15 bg-secondary/70 p-3">
               <p className="font-bold">تمليك</p>
               <p className="mt-1 text-muted-foreground">{COMMISSION.saleLabel}</p>
             </div>
-            <div className="rounded-2xl bg-secondary p-3">
+            <div className="rounded-2xl border border-primary/15 bg-secondary/70 p-3">
               <p className="font-bold">إيجار</p>
               <p className="mt-1 text-muted-foreground">{COMMISSION.rentLabel}</p>
             </div>
@@ -112,7 +117,7 @@ function Index() {
 
         <Link
           to="/subscribe"
-          className="mt-6 flex items-center justify-between rounded-2xl px-6 py-4 text-primary-foreground shadow-[var(--shadow-soft)]"
+          className="lux-sheen mt-6 flex items-center justify-between rounded-2xl px-6 py-4 text-primary-foreground shadow-[var(--shadow-lux)] transition-transform duration-300 hover:-translate-y-0.5"
           style={{ backgroundImage: "var(--gradient-gold)" }}
         >
           <Crown className="size-6" />
@@ -122,6 +127,7 @@ function Index() {
           </span>
           <span className="size-6" />
         </Link>
+
         </div>
       </main>
     </AppShell>
@@ -145,7 +151,7 @@ function SectionCard({
     <Link
       to="/account"
       search={{ section: to }}
-      className="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl border border-border shadow-lg"
+      className="lux-sheen group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl border border-primary/25 shadow-[var(--shadow-lux)] transition-transform duration-500 hover:-translate-y-1"
       style={{ backgroundImage: tone === "gold" ? "var(--gradient-gold)" : "var(--gradient-blue)" }}
     >
       <div className="absolute inset-0 z-0">
@@ -164,7 +170,7 @@ function SectionCard({
       </div>
 
       <div className="relative z-10 p-4 text-center text-foreground">
-        <p className="text-2xl font-black tracking-tight drop-shadow-md">{title}</p>
+        <p className="text-gold text-2xl font-black tracking-tight">{title}</p>
         <p className="mt-1 text-[11px] font-medium opacity-90">{sub}</p>
         <span
           className="mx-auto mt-3 flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground"

@@ -32,11 +32,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto w-full max-w-md px-5 pb-16 pt-6 sm:max-w-2xl">
-        <header className="flex items-center justify-between">
+        <header className="sticky top-3 z-30 flex items-center justify-between rounded-3xl border border-primary/20 bg-background/70 px-3 py-2 shadow-[var(--shadow-lux)] backdrop-blur-xl">
           <Link
             to="/notifications"
             aria-label="التنبيهات"
-            className="relative rounded-full border border-border p-2 text-primary"
+            className="relative rounded-full border border-primary/30 bg-primary/10 p-2 text-primary transition-colors hover:bg-primary/20"
           >
             <Bell className="size-5" />
             {unread > 0 && (
@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           <Link to="/" className="flex min-w-0 flex-col items-center gap-1 px-2 text-center">
             <img src={logo} alt="شعار عقارات منيا القمح الجديدة" width={56} height={56} className="size-14" />
-            <span className="text-base font-bold leading-tight text-primary">
+            <span className="text-gold text-base font-bold leading-tight">
               عقارات منيا القمح الجديدة
             </span>
             <span className="text-[11px] text-muted-foreground">منصة تسويق عقاري موثوقة</span>
@@ -55,7 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <DropdownMenu>
             <DropdownMenuTrigger
               aria-label="القائمة"
-              className="rounded-full border border-border p-2 text-primary"
+              className="rounded-full border border-primary/30 bg-primary/10 p-2 text-primary transition-colors hover:bg-primary/20"
             >
               <Menu className="size-5" />
             </DropdownMenuTrigger>
