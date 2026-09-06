@@ -151,7 +151,7 @@ function SectionCard({
     <Link
       to="/account"
       search={{ section: to }}
-      className="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl border border-border shadow-lg"
+      className="lux-sheen group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl border border-primary/25 shadow-[var(--shadow-lux)] transition-transform duration-500 hover:-translate-y-1"
       style={{ backgroundImage: tone === "gold" ? "var(--gradient-gold)" : "var(--gradient-blue)" }}
     >
       <div className="absolute inset-0 z-0">
@@ -170,7 +170,7 @@ function SectionCard({
       </div>
 
       <div className="relative z-10 p-4 text-center text-foreground">
-        <p className="text-2xl font-black tracking-tight drop-shadow-md">{title}</p>
+        <p className="text-gold text-2xl font-black tracking-tight">{title}</p>
         <p className="mt-1 text-[11px] font-medium opacity-90">{sub}</p>
         <span
           className="mx-auto mt-3 flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground"
