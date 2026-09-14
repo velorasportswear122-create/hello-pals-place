@@ -88,11 +88,12 @@ function PropertyPage() {
   const { data: myRequest } = useQuery({
     queryKey: ["my-request", id, user?.id],
     queryFn: async () => {
+      if (!user) return null;
       const { data } = await supabase
         .from("contact_requests")
         .select("id,status")
         .eq("property_id", id)
-        .eq("requester_id", user!.id)
+        .eq("requester_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
